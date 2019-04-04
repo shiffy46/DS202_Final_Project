@@ -16,14 +16,18 @@ Lim Guang
 
 We are extracting data from the Department of Education
 We are specifically targeting the College Score Card Data through API calls to their Servers
+
 Overview
+
 We are able to construct different dataframes off of the JSON repsonse that covers topics:
-  1) completion stats
-  2) earnings from students reports
-  3) student body demographics
-  4) admission stats
-  5) aid overviews
-  6) repayment plans and stats
+
+1) completion stats
+2) earnings from students reports
+3) student body demographics
+4) admission stats
+5) aid overviews
+6) repayment plans and stats
+
 We are able to filter the data based on year from 1996 to 2016
 
 Link:
@@ -34,10 +38,11 @@ This will return a list of statistics based on the year and the subsetted topics
 
 We hope to draw insights of the changes within certain categories of each year.
 Possible examples can be:
-  1) How have the default rates on certain loan repayment plans changed over the years?
-  2) What are the student earnings from graduates and how have they changed?
-  3) How many students are using aid compared to the whole student body?
-  etc.
+  
+1) How have the default rates on certain loan repayment plans changed over the years?
+2) What are the student earnings from graduates and how have they changed?
+3) How many students are using aid compared to the whole student body?
+etc.
 
 There is much more data that we can collect, but to start off we are keeping it simple with student information.
 
