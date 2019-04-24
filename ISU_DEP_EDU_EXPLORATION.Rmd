@@ -1,0 +1,46 @@
+---
+title: "ISU_DEP_EDU_DATA"
+author: "Sam Shifflett"
+date: "4/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+PREPARE THE DATA
+```{r}
+library(httr)
+csv = "https://api.data.gov/ed/collegescorecard/v1/schools.csv?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
+csv1 = read_csv(GET(csv))
+mydata <- fromJSON(url)
+data_get<- GET(url)
+get2json<- content(data_get, as = "parsed")
+parse2json<- (toJSON(get2json))
+test = fromJSON(parse2json, flatten=TRUE)
+test$results[,1]$completion[1]
+
+```
+
+
+--------DANNY---------
+```{r}
+
+
+```
+--------DANNY---------
+
+---------LIM----------
+```{r}
+
+
+```
+---------LIM----------
+
+---------SAM-----------
+```{r}
+
+
+```
+---------SAM-----------
