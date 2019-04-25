@@ -9,17 +9,74 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+SOURCES:
+MAKE SURE TO PUT ANY SOURCES YOU GUYS LOOK AT IN HERE!!!!
+__________________________
+-SAM
+https://www.tutorialspoint.com/r/r_functions.htm
+https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_detect
+https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
+https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/paste
+
+-
+-LIM
+
+-
+-DANNY
+
+-
+
+__________________________
+
 PREPARE THE DATA
 ```{r}
 library(httr)
-csv = "https://api.data.gov/ed/collegescorecard/v1/schools.csv?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
-csv1 = read_csv(GET(csv))
-mydata <- fromJSON(url)
+library(jsonlite)
+url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
 data_get<- GET(url)
+
+
 get2json<- content(data_get, as = "parsed")
-parse2json<- (toJSON(get2json))
-test = fromJSON(parse2json, flatten=TRUE)
-test$results[,1]$completion[1]
+#----------------------------
+get_subs <- function(name) {
+  completion = unlist(fromJSON(toJSON(name$completion,flatten=TRUE)))
+  students = unlist(fromJSON(toJSON(name$student,flatten=TRUE)))
+  admissions = unlist(fromJSON(toJSON(name$admissions,flatten=TRUE)))
+  academics = unlist(fromJSON(toJSON(name$academics,flatten=TRUE)))
+  aid = unlist(fromJSON(toJSON(name$aid,flatten=TRUE)))
+  repayment = unlist(fromJSON(toJSON(name$repayment,flatten=TRUE)))
+  earnings = unlist(fromJSON(toJSON(name$earnings,flatten=TRUE)))
+  cost = unlist(fromJSON(toJSON(name$cost,flatten=TRUE)))
+  completion = data.frame(completion)
+  students = data.frame(students)
+  admissions = data.frame(admissions)
+  academics = data.frame(academics)
+  aid = data.frame(aid)
+  repayment= data.frame(repayment)
+  earnings= data.frame(earnings)
+  cost= data.frame(cost)
+  yearList = list(completion,students,admissions,academics,aid,repayment,earnings,cost)
+  return(yearList)
+}
+
+data2012 = get_subs(get2json$results[[1]]$`2012`)
+data2011 = get_subs(get2json$results[[1]]$`2011`)
+data2010 = get_subs(get2json$results[[1]]$`2010`)
+data2009 = get_subs(get2json$results[[1]]$`2009`)
+data2008 = get_subs(get2json$results[[1]]$`2008`)
+data2007 = get_subs(get2json$results[[1]]$`2007`)
+data2006 = get_subs(get2json$results[[1]]$`2006`)
+data2005 = get_subs(get2json$results[[1]]$`2005`)
+data2004 = get_subs(get2json$results[[1]]$`2004`)
+data2003 = get_subs(get2json$results[[1]]$`2003`)
+data2002 = get_subs(get2json$results[[1]]$`2002`)
+data2001 = get_subs(get2json$results[[1]]$`2001`)
+data2000 = get_subs(get2json$results[[1]]$`2000`)
+data1999 = get_subs(get2json$results[[1]]$`1999`)
+data1998 = get_subs(get2json$results[[1]]$`1998`)
+data1997 = get_subs(get2json$results[[1]]$`1997`)
+data1996 = get_subs(get2json$results[[1]]$`1996`)
+
 
 ```
 
