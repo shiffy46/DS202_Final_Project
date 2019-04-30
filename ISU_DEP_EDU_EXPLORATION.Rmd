@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-SOURCES:
+##SOURCES:
 MAKE SURE TO PUT ANY SOURCES YOU GUYS LOOK AT IN HERE!!!!
 __________________________
 -SAM
@@ -17,6 +17,8 @@ https://www.tutorialspoint.com/r/r_functions.htm
 https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_detect
 https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
 https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/paste
+#row names to column
+https://stackoverflow.com/questions/29511215/convert-row-names-into-first-column
 
 -
 -LIM
@@ -32,12 +34,12 @@ PREPARE THE DATA
 ```{r}
 library(httr)
 library(jsonlite)
+options(scipen = 999)
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
 data_get<- GET(url)
-
-
 get2json<- content(data_get, as = "parsed")
 #----------------------------
+#This function parses the Json repsonse into a dataframe for each category that we are analyzing
 get_subs <- function(name) {
   completion = unlist(fromJSON(toJSON(name$completion,flatten=TRUE)))
   students = unlist(fromJSON(toJSON(name$student,flatten=TRUE)))
@@ -59,6 +61,12 @@ get_subs <- function(name) {
   return(yearList)
 }
 
+get_rownames <- function(dataList) {
+  for (element in dataList) {
+    for (dataFrame in element)
+  }
+}
+
 data2012 = get_subs(get2json$results[[1]]$`2012`)
 data2011 = get_subs(get2json$results[[1]]$`2011`)
 data2010 = get_subs(get2json$results[[1]]$`2010`)
@@ -77,9 +85,23 @@ data1998 = get_subs(get2json$results[[1]]$`1998`)
 data1997 = get_subs(get2json$results[[1]]$`1997`)
 data1996 = get_subs(get2json$results[[1]]$`1996`)
 
+#for parsing with for loop all the list of dataframes
+dataList = c(c(data2012),c(data2011),c(data2010),c(data2009),c(data2008),c(data2007),c(data2006),c(data2005),c(data2004),c(data2003),c(data2002),c(data2001),c(data2000),c(data1999),c(data1998),c(data1997),c(data1996))
 
 ```
 
+## Two Segments.
+1) Academic/Students
+  -completion
+  -students
+  -admissions
+  -academics
+  
+2) Financials
+  -aid
+  -repayments
+  -earnings
+  -cost
 
 --------DANNY---------
 ```{r}
@@ -97,6 +119,20 @@ data1996 = get_subs(get2json$results[[1]]$`1996`)
 
 ---------SAM-----------
 ```{r}
+data2012[[8]][1,1]
+
+library(data.table)
+setDT(data2012[[2]], keep.rownames = TRUE)[]
+data2012
+#helps with selecting certain rows in dataframe based on string matches
+
+for(thing in dataList) {
+  if(dim(thing) != 0) {
+    setDT(thing, keep.rownames = TRUE)[]
+    print(thing)
+  }
+}
+
 
 
 ```
