@@ -19,6 +19,8 @@ https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
 https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/paste
 #row names to column
 https://stackoverflow.com/questions/29511215/convert-row-names-into-first-column
+#transpose dataframe
+http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
 
 -
 -LIM
@@ -38,8 +40,11 @@ library(tidyverse)
 library(plyr)
 options(scipen = 999)
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
+UIowaURL = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=University%20of%20Iowa"
 data_get<- GET(url)
+data_get2 <- GET(UIowaURL)
 get2json<- content(data_get, as = "parsed")
+get2json2 <- content(data_get2, as = "parsed")
 #----------------------------
 #This function parses the Json repsonse into a dataframe for each category that we are analyzing
 get_subs <- function(name) {
@@ -86,46 +91,95 @@ change_zeros <- function(collect) {
   return(datalist)
 }
 
-list_topics <- function(number) {
-  tempList = list(data1997[[number]],data1998[[number]],data1999[[number]],data2000[[number]],data2001[[number]],data2002[[number]],data2003[[number]],data2004[[number]],data2005[[number]],data2006[[number]],data2007[[number]],data2008[[number]],data2009[[number]],data2010[[number]],data2011[[number]],data2012[[number]])
+ISUlist_topics <- function(number) {
+  tempList = list(ISUdata1997[[number]],ISUdata1998[[number]],ISUdata1999[[number]],ISUdata2000[[number]],ISUdata2001[[number]],ISUdata2002[[number]],ISUdata2003[[number]],ISUdata2004[[number]],ISUdata2005[[number]],ISUdata2006[[number]],ISUdata2007[[number]],ISUdata2008[[number]],ISUdata2009[[number]],ISUdata2010[[number]],ISUdata2011[[number]],ISUdata2012[[number]])
   return(rev(tempList))
 }
 
-join_rename <- function(number) {
+UIlist_topics <- function(number) {
+  tempList = list(UIdata1997[[number]],UIdata1998[[number]],UIdata1999[[number]],UIdata2000[[number]],UIdata2001[[number]],UIdata2002[[number]],UIdata2003[[number]],UIdata2004[[number]],UIdata2005[[number]],UIdata2006[[number]],UIdata2007[[number]],UIdata2008[[number]],UIdata2009[[number]],UIdata2010[[number]],UIdata2011[[number]],UIdata2012[[number]])
+  return(rev(tempList))
+}
+
+ISUjoin_rename <- function(number) {
   namesData = c("1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","stat")
-  data = join_all(list_topics(number), by='rn', type='left')
+  data = join_all(ISUlist_topics(number), by='rn', type='left')
   names(data) = rev(namesData)
-  return(data)
+  t_data = as.data.frame(t(as.matrix(data)))
+  DF = t_data[2:nrow(t_data),1:ncol(t_data)]
+  colnames(DF) = data[,1]
+  for(i in seq(from=1,to=ncol(DF),by=1)) {
+    names(DF)[i] = data[,1][i]
+  }
+  return(DF)
+}
+UIjoin_rename <- function(number) {
+  namesData = c("1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","stat")
+  data = join_all(UIlist_topics(number), by='rn', type='left')
+  names(data) = rev(namesData)
+  t_data = as.data.frame(t(as.matrix(data)))
+  DF = t_data[2:nrow(t_data),1:ncol(t_data)]
+  colnames(DF) = data[,1]
+  for(i in seq(from=1,to=ncol(DF),by=1)) {
+    names(DF)[i] = data[,1][i]
+  }
+  return(DF)
 }
 
 #create dataframes for each sub category for each year
-data2012 = get_subs(get2json$results[[1]]$`2012`)
-data2011 = get_subs(get2json$results[[1]]$`2011`)
-data2010 = get_subs(get2json$results[[1]]$`2010`)
-data2009 = get_subs(get2json$results[[1]]$`2009`)
-data2008 = get_subs(get2json$results[[1]]$`2008`)
-data2007 = get_subs(get2json$results[[1]]$`2007`)
-data2006 = get_subs(get2json$results[[1]]$`2006`)
-data2005 = get_subs(get2json$results[[1]]$`2005`)
-data2004 = get_subs(get2json$results[[1]]$`2004`)
-data2003 = get_subs(get2json$results[[1]]$`2003`)
-data2002 = get_subs(get2json$results[[1]]$`2002`)
-data2001 = get_subs(get2json$results[[1]]$`2001`)
-data2000 = get_subs(get2json$results[[1]]$`2000`)
-data1999 = get_subs(get2json$results[[1]]$`1999`)
-data1998 = get_subs(get2json$results[[1]]$`1998`)
-data1997 = get_subs(get2json$results[[1]]$`1997`)
-data1996 = get_subs(get2json$results[[1]]$`1996`)
-completionData = join_rename(1)
-studentsData = join_rename(2)
-admissionData = join_rename(3)
-academicsData = join_rename(4)
-aidData = join_rename(5)
-repaymentData = join_rename(6)
-earningsData = join_rename(7)
-costData = join_rename(8)
+ISUdata2012 = get_subs(get2json$results[[1]]$`2012`)
+ISUdata2011 = get_subs(get2json$results[[1]]$`2011`)
+ISUdata2010 = get_subs(get2json$results[[1]]$`2010`)
+ISUdata2009 = get_subs(get2json$results[[1]]$`2009`)
+ISUdata2008 = get_subs(get2json$results[[1]]$`2008`)
+ISUdata2007 = get_subs(get2json$results[[1]]$`2007`)
+ISUdata2006 = get_subs(get2json$results[[1]]$`2006`)
+ISUdata2005 = get_subs(get2json$results[[1]]$`2005`)
+ISUdata2004 = get_subs(get2json$results[[1]]$`2004`)
+ISUdata2003 = get_subs(get2json$results[[1]]$`2003`)
+ISUdata2002 = get_subs(get2json$results[[1]]$`2002`)
+ISUdata2001 = get_subs(get2json$results[[1]]$`2001`)
+ISUdata2000 = get_subs(get2json$results[[1]]$`2000`)
+ISUdata1999 = get_subs(get2json$results[[1]]$`1999`)
+ISUdata1998 = get_subs(get2json$results[[1]]$`1998`)
+ISUdata1997 = get_subs(get2json$results[[1]]$`1997`)
+ISUdata1996 = get_subs(get2json$results[[1]]$`1996`)
+ISUcompletionData = ISUjoin_rename(1)
+ISUstudentsData = ISUjoin_rename(2)
+ISUadmissionData = ISUjoin_rename(3)
+ISUacademicsData = ISUjoin_rename(4)
+ISUaidData = ISUjoin_rename(5)
+ISUrepaymentData = ISUjoin_rename(6)
+ISUearningsData = ISUjoin_rename(7)
+ISUcostData = ISUjoin_rename(8)
 
-costData
+UIdata2012 = get_subs(get2json2$results[[1]]$`2012`)
+UIdata2011 = get_subs(get2json2$results[[1]]$`2011`)
+UIdata2010 = get_subs(get2json2$results[[1]]$`2010`)
+UIdata2009 = get_subs(get2json2$results[[1]]$`2009`)
+UIdata2008 = get_subs(get2json2$results[[1]]$`2008`)
+UIdata2007 = get_subs(get2json2$results[[1]]$`2007`)
+UIdata2006 = get_subs(get2json2$results[[1]]$`2006`)
+UIdata2005 = get_subs(get2json2$results[[1]]$`2005`)
+UIdata2004 = get_subs(get2json2$results[[1]]$`2004`)
+UIdata2003 = get_subs(get2json2$results[[1]]$`2003`)
+UIdata2002 = get_subs(get2json2$results[[1]]$`2002`)
+UIdata2001 = get_subs(get2json2$results[[1]]$`2001`)
+UIdata2000 = get_subs(get2json2$results[[1]]$`2000`)
+UIdata1999 = get_subs(get2json2$results[[1]]$`1999`)
+UIdata1998 = get_subs(get2json2$results[[1]]$`1998`)
+UIdata1997 = get_subs(get2json2$results[[1]]$`1997`)
+UIdata1996 = get_subs(get2json2$results[[1]]$`1996`)
+UIcompletionData = UIjoin_rename(1)
+UIstudentsData = UIjoin_rename(2)
+UIadmissionData = UIjoin_rename(3)
+UIacademicsData = UIjoin_rename(4)
+UIaidData = UIjoin_rename(5)
+UIrepaymentData = UIjoin_rename(6)
+UIearningsData = UIjoin_rename(7)
+UIcostData = UIjoin_rename(8)
+
+ISUcompletionData
 ```
 
 
@@ -160,20 +214,7 @@ costData
 
 ---------SAM-----------
 ```{r}
-data2012[[8]][1,1]
-
-library(data.table)
-setDT(data2012[[2]], keep.rownames = TRUE)[]
-data2012
-#helps with selecting certain rows in dataframe based on string matches
-
-for(thing in dataList) {
-  if(dim(thing) != 0) {
-    setDT(thing, keep.rownames = TRUE)[]
-    print(thing)
-  }
-}
-
+ggplot()
 
 
 ```
