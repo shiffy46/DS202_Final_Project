@@ -34,6 +34,8 @@ PREPARE THE DATA
 ```{r}
 library(httr)
 library(jsonlite)
+library(tidyverse)
+library(plyr)
 options(scipen = 999)
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
 data_get<- GET(url)
@@ -57,16 +59,46 @@ get_subs <- function(name) {
   repayment= data.frame(repayment)
   earnings= data.frame(earnings)
   cost= data.frame(cost)
-  yearList = list(completion,students,admissions,academics,aid,repayment,earnings,cost)
-  return(yearList)
+  yearList = c(list(completion),list(students),list(admissions),list(academics),list(aid),list(repayment),list(earnings),list(cost))
+  add_col_name(yearList)
+  return(change_zeros(yearList))
 }
 
-get_rownames <- function(dataList) {
-  for (element in dataList) {
-    for (dataFrame in element)
+add_col_name <- function(data) {
+  for(i in seq(from=1,to=length(data))) {
+    if(dim(data[[i]]) != 0) {
+      setDT(data[[i]], keep.rownames = TRUE)[]
+    }
   }
 }
 
+change_zeros <- function(collect) {
+  datalist = c()
+  for(i in seq(from=1,to=length(collect),by=1)) {
+    if(ncol(collect[[i]]) == 0) {
+      data = data.frame(rn=c("avg_net_price.overall","students_with_pell_grant","sat_scores.average.overall","program_percentage.education","pell_grant_rate","repayment_cohort.3_year_declining_balance","6_yrs_after_entry.working_not_enrolled.income.lowest_tercile","avg_net_price.public"),empty="None")
+      datalist = c(datalist,list(data))
+    }
+    else {
+      datalist = c(datalist,list(collect[[i]]))
+    }
+  }
+  return(datalist)
+}
+
+list_topics <- function(number) {
+  tempList = list(data1997[[number]],data1998[[number]],data1999[[number]],data2000[[number]],data2001[[number]],data2002[[number]],data2003[[number]],data2004[[number]],data2005[[number]],data2006[[number]],data2007[[number]],data2008[[number]],data2009[[number]],data2010[[number]],data2011[[number]],data2012[[number]])
+  return(rev(tempList))
+}
+
+join_rename <- function(number) {
+  namesData = c("1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","stat")
+  data = join_all(list_topics(number), by='rn', type='left')
+  names(data) = rev(namesData)
+  return(data)
+}
+
+#create dataframes for each sub category for each year
 data2012 = get_subs(get2json$results[[1]]$`2012`)
 data2011 = get_subs(get2json$results[[1]]$`2011`)
 data2010 = get_subs(get2json$results[[1]]$`2010`)
@@ -84,11 +116,20 @@ data1999 = get_subs(get2json$results[[1]]$`1999`)
 data1998 = get_subs(get2json$results[[1]]$`1998`)
 data1997 = get_subs(get2json$results[[1]]$`1997`)
 data1996 = get_subs(get2json$results[[1]]$`1996`)
+completionData = join_rename(1)
+studentsData = join_rename(2)
+admissionData = join_rename(3)
+academicsData = join_rename(4)
+aidData = join_rename(5)
+repaymentData = join_rename(6)
+earningsData = join_rename(7)
+costData = join_rename(8)
 
-#for parsing with for loop all the list of dataframes
-dataList = c(c(data2012),c(data2011),c(data2010),c(data2009),c(data2008),c(data2007),c(data2006),c(data2005),c(data2004),c(data2003),c(data2002),c(data2001),c(data2000),c(data1999),c(data1998),c(data1997),c(data1996))
-
+costData
 ```
+
+
+
 
 ## Two Segments.
 1) Academic/Students
