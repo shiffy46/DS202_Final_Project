@@ -39,7 +39,9 @@ library(jsonlite)
 library(tidyverse)
 library(plyr)
 options(scipen = 999)
+#This is the URL for ISU data
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
+#This is the URL for UniIowa data
 UIowaURL = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=University%20of%20Iowa"
 data_get<- GET(url)
 data_get2 <- GET(UIowaURL)
@@ -69,6 +71,7 @@ get_subs <- function(name) {
   return(change_zeros(yearList))
 }
 
+#creates a column in the first column for selecting
 add_col_name <- function(data) {
   for(i in seq(from=1,to=length(data))) {
     if(dim(data[[i]]) != 0) {
@@ -77,6 +80,7 @@ add_col_name <- function(data) {
   }
 }
 
+#creates a new dataframe for dataframes with no repsonse from get_subs
 change_zeros <- function(collect) {
   datalist = c()
   for(i in seq(from=1,to=length(collect),by=1)) {
@@ -91,16 +95,19 @@ change_zeros <- function(collect) {
   return(datalist)
 }
 
+#grabs the ISU data associated with a certain subtopic and puts them into a list for each year
 ISUlist_topics <- function(number) {
   tempList = list(ISUdata1997[[number]],ISUdata1998[[number]],ISUdata1999[[number]],ISUdata2000[[number]],ISUdata2001[[number]],ISUdata2002[[number]],ISUdata2003[[number]],ISUdata2004[[number]],ISUdata2005[[number]],ISUdata2006[[number]],ISUdata2007[[number]],ISUdata2008[[number]],ISUdata2009[[number]],ISUdata2010[[number]],ISUdata2011[[number]],ISUdata2012[[number]])
   return(rev(tempList))
 }
 
+#grabs the UI data associated with a certain subtopic and puts them into a list for each year
 UIlist_topics <- function(number) {
   tempList = list(UIdata1997[[number]],UIdata1998[[number]],UIdata1999[[number]],UIdata2000[[number]],UIdata2001[[number]],UIdata2002[[number]],UIdata2003[[number]],UIdata2004[[number]],UIdata2005[[number]],UIdata2006[[number]],UIdata2007[[number]],UIdata2008[[number]],UIdata2009[[number]],UIdata2010[[number]],UIdata2011[[number]],UIdata2012[[number]])
   return(rev(tempList))
 }
 
+#joins all of the dataframes for each subtopic for ISU data
 ISUjoin_rename <- function(number) {
   namesData = c("1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","stat")
   data = join_all(ISUlist_topics(number), by='rn', type='left')
@@ -111,8 +118,11 @@ ISUjoin_rename <- function(number) {
   for(i in seq(from=1,to=ncol(DF),by=1)) {
     names(DF)[i] = data[,1][i]
   }
+  setDT(DF, keep.rownames = TRUE)[]
   return(DF)
 }
+
+#joins all of the dataframes for each subtopic for UI data
 UIjoin_rename <- function(number) {
   namesData = c("1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","stat")
   data = join_all(UIlist_topics(number), by='rn', type='left')
@@ -123,6 +133,7 @@ UIjoin_rename <- function(number) {
   for(i in seq(from=1,to=ncol(DF),by=1)) {
     names(DF)[i] = data[,1][i]
   }
+  setDT(DF, keep.rownames = TRUE)[]
   return(DF)
 }
 
@@ -144,6 +155,7 @@ ISUdata1999 = get_subs(get2json$results[[1]]$`1999`)
 ISUdata1998 = get_subs(get2json$results[[1]]$`1998`)
 ISUdata1997 = get_subs(get2json$results[[1]]$`1997`)
 ISUdata1996 = get_subs(get2json$results[[1]]$`1996`)
+#join all of the dataframes from each year into one full dataframe by subtopic
 ISUcompletionData = ISUjoin_rename(1)
 ISUstudentsData = ISUjoin_rename(2)
 ISUadmissionData = ISUjoin_rename(3)
@@ -153,6 +165,7 @@ ISUrepaymentData = ISUjoin_rename(6)
 ISUearningsData = ISUjoin_rename(7)
 ISUcostData = ISUjoin_rename(8)
 
+#create dataframes for each sub category for each year
 UIdata2012 = get_subs(get2json2$results[[1]]$`2012`)
 UIdata2011 = get_subs(get2json2$results[[1]]$`2011`)
 UIdata2010 = get_subs(get2json2$results[[1]]$`2010`)
@@ -170,6 +183,7 @@ UIdata1999 = get_subs(get2json2$results[[1]]$`1999`)
 UIdata1998 = get_subs(get2json2$results[[1]]$`1998`)
 UIdata1997 = get_subs(get2json2$results[[1]]$`1997`)
 UIdata1996 = get_subs(get2json2$results[[1]]$`1996`)
+#join all of the dataframes from each year into one full dataframe by subtopic
 UIcompletionData = UIjoin_rename(1)
 UIstudentsData = UIjoin_rename(2)
 UIadmissionData = UIjoin_rename(3)
@@ -179,7 +193,7 @@ UIrepaymentData = UIjoin_rename(6)
 UIearningsData = UIjoin_rename(7)
 UIcostData = UIjoin_rename(8)
 
-ISUcompletionData
+UIcostData
 ```
 
 
@@ -214,7 +228,12 @@ ISUcompletionData
 
 ---------SAM-----------
 ```{r}
-ggplot()
+ISUcostData
+ISUvsUIcost = inner_join(ISUcostData,UIcostData,by="rn") 
+ISUvsUIcost = ISUvsUIcost %>% select(rn,tuition.out_of_state.x,tuition.in_state.x,tuition.out_of_state.y,tuition.in_state.y)
+ISUvsUIcost$tuition.out_of_state.x = as.numeric(ISUvsUIcost$tuition.out_of_state.x)
+ggplot(ISUvsUIcost, aes(x=factor(rn),y=tuition.out_of_state.x,group=rn)) + geom_line()
+ISUvsUIcost
 
 
 ```
