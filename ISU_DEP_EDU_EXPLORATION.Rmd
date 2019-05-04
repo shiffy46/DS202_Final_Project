@@ -34,10 +34,12 @@ __________________________
 
 PREPARE THE DATA
 ```{r}
+devtools::install_github("Rdatatable/data.table", build_vignettes = FALSE)
 library(httr)
 library(jsonlite)
 library(tidyverse)
 library(plyr)
+library(data.table)
 options(scipen = 999)
 #This is the URL for ISU data
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
@@ -163,7 +165,7 @@ ISUacademicsData = ISUjoin_rename(4)
 ISUaidData = ISUjoin_rename(5)
 ISUrepaymentData = ISUjoin_rename(6)
 ISUearningsData = ISUjoin_rename(7)
-ISUcostData = ISUjoin_rename(8)
+ISUcostData <- ISUjoin_rename(8)
 
 #create dataframes for each sub category for each year
 UIdata2012 = get_subs(get2json2$results[[1]]$`2012`)
@@ -192,8 +194,7 @@ UIaidData = UIjoin_rename(5)
 UIrepaymentData = UIjoin_rename(6)
 UIearningsData = UIjoin_rename(7)
 UIcostData = UIjoin_rename(8)
-
-UIcostData
+ISUacademicsData
 ```
 
 
@@ -228,13 +229,60 @@ UIcostData
 
 ---------SAM-----------
 ```{r}
-ISUcostData
 ISUvsUIcost = inner_join(ISUcostData,UIcostData,by="rn") 
 ISUvsUIcost = ISUvsUIcost %>% select(rn,tuition.out_of_state.x,tuition.in_state.x,tuition.out_of_state.y,tuition.in_state.y)
-ISUvsUIcost$tuition.out_of_state.x = as.numeric(ISUvsUIcost$tuition.out_of_state.x)
-ggplot(ISUvsUIcost, aes(x=factor(rn),y=tuition.out_of_state.x,group=rn)) + geom_line()
-ISUvsUIcost
+ISUvsUIcost = type.convert(ISUvsUIcost)
+ggplot(ISUvsUIcost) + 
+geom_line(aes(x=rn,y=tuition.out_of_state.x,group = 1,color="ISU",linetype="Out of State")) + geom_line(aes(x=rn,y=tuition.out_of_state.y,group = 1,color="UI",linetype="Out of State")) + geom_line(aes(x=rn,y=tuition.in_state.y,group = 1,color="UI",linetype="In State")) + geom_line(aes(x=rn,y=tuition.in_state.x,group = 1,color="ISU",linetype="In State")) +
+geom_point(aes(x=rn,y=tuition.out_of_state.x,group = 1,color="ISU")) + geom_point(aes(x=rn,y=tuition.out_of_state.y,group = 1,color="UI")) + geom_point(aes(x=rn,y=tuition.in_state.y,group = 1,color="UI")) + 
+geom_point(aes(x=rn,y=tuition.in_state.x,group = 1,color="ISU"))
+```
 
 
+
+```{r}
+ISUvsUIearnings = inner_join(ISUearningsData,UIearningsData,by="rn")
+ISUvsUIearnings = ISUvsUIearnings %>% select(rn,`10_yrs_after_entry.working_not_enrolled.mean_earnings.x`,`10_yrs_after_entry.mean_earnings.female_students.x`,`10_yrs_after_entry.mean_earnings.male_students.x`,`10_yrs_after_entry.working_not_enrolled.mean_earnings.y`,`10_yrs_after_entry.mean_earnings.female_students.y`,`10_yrs_after_entry.mean_earnings.male_students.y`)
+ISUvsUIearnings = ISUvsUIearnings[complete.cases(ISUvsUIearnings), ]
+ggplot(ISUvsUIearnings) + 
+geom_line(aes(x=rn,y=`10_yrs_after_entry.working_not_enrolled.mean_earnings.x`,group = 1,color="MEANISU")) + 
+geom_line(aes(x=rn,y=`10_yrs_after_entry.working_not_enrolled.mean_earnings.y`,group = 1,color="MEANUI")) +
+geom_line(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.female_students.x`,group = 1,color="ISU",linetype="FEMALE")) +
+geom_line(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.male_students.x`,group = 1,color="ISU",linetype="MALE")) +
+geom_line(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.female_students.y`,group = 1,color="UI",linetype="FEMALE")) + 
+geom_line(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.male_students.y`,group = 1,color="UI",linetype="MALE")) +
+geom_point(aes(x=rn,y=`10_yrs_after_entry.working_not_enrolled.mean_earnings.x`,group = 1,color="MEANISU")) + 
+geom_point(aes(x=rn,y=`10_yrs_after_entry.working_not_enrolled.mean_earnings.y`,group = 1,color="MEANUI")) +
+geom_point(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.female_students.x`,group = 1,color="ISU",linetype="FEMALE")) +
+geom_point(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.male_students.x`,group = 1,color="ISU",linetype="MALE")) +
+geom_point(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.female_students.y`,group = 1,color="UI",linetype="FEMALE")) + 
+geom_point(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.male_students.y`,group = 1,color="UI",linetype="MALE")) 
+```
+
+
+
+```{r}
+ISUaidvisData = ISUaidData %>% select(rn,median_debt.no_pell_grant,median_debt.pell_grant,median_debt.completers.overall,median_debt.noncompleters)
+UIaidvisData = UIaidData %>% select(rn,median_debt.no_pell_grant,median_debt.pell_grant,median_debt.completers.overall,median_debt.noncompleters)
+ISUvsUIaid = inner_join(ISUaidvisData,UIaidvisData,by='rn')
+ISUvsUIaid
+ggplot(ISUvsUIaid, aes(x=rn)) + 
+geom_line(aes(y=median_debt.no_pell_grant.x,group=1,color="ISU",linetype="No Pell"))+
+geom_line(aes(y=median_debt.no_pell_grant.y,group=1,color="UI",linetype="No Pell"))+
+geom_line(aes(y=median_debt.pell_grant.x,group=1,color="ISU",linetype="Pell"))+
+geom_line(aes(y=median_debt.pell_grant.y,group=1,color="UI",linetype="Pell"))
+```
+
+
+```{r}
+data1 = ISUaidData %>% select(rn,median_debt.completers.overall,median_debt.noncompleters)
+data2 = UIaidData %>% select(rn,median_debt.completers.overall,median_debt.noncompleters)
+ISUvsUIcompleters = inner_join(data1,data2,by='rn')
+ISUvsUIcompleters
+ggplot(ISUvsUIcompleters,aes(x=rn))+
+geom_line(aes(y=median_debt.completers.overall.x,group=1,color="ISU",linetype="completers"))+
+geom_line(aes(y=median_debt.completers.overall.y,group=1,color="UI",linetype="completers"))+
+geom_line(aes(y=median_debt.noncompleters.x,group=1,color="ISU",linetype="noncompleters"))+
+geom_line(aes(y=median_debt.noncompleters.y,group=1,color="UI",linetype="noncompleters"))
 ```
 ---------SAM-----------
