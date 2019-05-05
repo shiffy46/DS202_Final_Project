@@ -27,7 +27,10 @@ http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
 
 -
 -DANNY
-
+https://stackoverflow.com/questions/10357768/plotting-lines-and-the-group-aesthetic-in-ggplot2
+https://stackoverflow.com/questions/3777174/plotting-two-variables-as-lines-using-ggplot2-on-the-same-graph
+https://stackoverflow.com/questions/32588215/add-multiple-geom-line-to-ggplot?rq=1
+https://stackoverflow.com/questions/34379268/ggplot-and-two-different-geom-line-the-legend-does-not-appear/34379376
 -
 
 __________________________
@@ -210,6 +213,11 @@ UIcostData = UIjoin_rename(8)
   -cost
 
 --------DANNY---------
+
+
+Graph 1
+This graph displays the data of ISU and UofIowa students that completed school in 4 years. The y-axis displays the count of students and the x-axis displays the year. The top 2 lines of the plot show the total count of both female and male students for both universities. The bottom 4 lines show the count of both genders separately along with indicated color of the university which can be seen on the legend that is on the right side of the plot. The plot itself was designed to compare the number of students that completed their education in 4 years from both universities.
+
 ```{r}
 #comparison between the count of ISU and UI 4 year completion students.
 ISUvsUIcompl = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
@@ -270,6 +278,11 @@ ggplot(ISUvsUIcompl3) +
   geom_point(aes(x = rn, y = `8_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
 ```
 
+
+
+Graph 2
+This plot displays the data of average overall SAT scores from both ISU and UofIowa. The y-axis displays the sat score range while the x-axis displays the year. The plotted lines show the trend of data from both universities with indicated colors that can be seen on the legend located on the right side of the plot. The plot itself was designed to compare the average overall SAT scores between both universities.
+
 ```{r}
 #comparison of average overall sat scores between ISU and UI.
 ISUvsUIadmis = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
@@ -282,6 +295,11 @@ ggplot(ISUvsUIadmis) +
   geom_point(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) 
 ```  
 
+
+
+Graph 3
+This plot displays data of the overall admission rates from both ISU and UofIowa. The y-axis displays the percentage range of the overall admission rates while the x-axis displays the year. The plotted lines show the trend of data from both universities with indicated colors that can be seen on the legend located on the right side of the plot. This plot was designed to compare the overall admission rates of both universities.
+
 ```{r}
 #comparison of overall admission rates between ISU and UI.
 ISUvsUIadmis2 = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
@@ -293,6 +311,11 @@ ggplot(ISUvsUIadmis2) +
   geom_point(aes(x = rn, y = `admission_rate.overall.x`, group = 1, color = "ISU", linetype = "ADMIS")) +
   geom_point(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS"))
 ```
+
+
+
+Contribution: Five visualizations for the academic portions of the data, specifically completion data and admission data. Three of the five visuals display 4th, 6th, and 8th year completion cohorts from completion data. One visual displays average overall SAT scores from admission data. The final visual displays the overall admission rates from the admission data.
+
 --------DANNY---------
 
 ---------LIM----------
