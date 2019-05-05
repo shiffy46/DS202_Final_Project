@@ -194,7 +194,6 @@ UIaidData = UIjoin_rename(5)
 UIrepaymentData = UIjoin_rename(6)
 UIearningsData = UIjoin_rename(7)
 UIcostData = UIjoin_rename(8)
-ISUacademicsData
 ```
 
 
@@ -364,4 +363,21 @@ geom_line(aes(y=median_debt.completers.overall.y,group=1,color="UI",linetype="co
 geom_line(aes(y=median_debt.noncompleters.x,group=1,color="ISU",linetype="noncompleters"))+
 geom_line(aes(y=median_debt.noncompleters.y,group=1,color="UI",linetype="noncompleters"))
 ```
+
+
+```{r}
+data1 = ISUrepaymentData %>% select(rn,`2_yr_default_rate`)
+data2 = UIrepaymentData %>% select(rn,`2_yr_default_rate`)
+ISUvsUIdefault = inner_join(data1,data2,by="rn")
+ISUvsUIdefault$rn = as.integer(ISUvsUIdefault$rn)
+ISUvsUIdefault = ISUvsUIdefault %>% inner_join(ISUvsUIcost,by="rn")
+ISUvsUIdefault
+ggplot(ISUvsUIdefault)+
+geom_point(aes(x=tuition.out_of_state.x,y=`2_yr_default_rate.x`,color="ISU",shape="Out of State"))+
+geom_point(aes(x=tuition.out_of_state.y,y=`2_yr_default_rate.y`,color="UI",shape="Out of State"))+
+geom_point(aes(x=tuition.in_state.x,y=`2_yr_default_rate.x`,color="ISU",shape="In State"))+
+geom_point(aes(x=tuition.in_state.y,y=`2_yr_default_rate.y`,color="UI",shape="In State"))
+
+```
+
 ---------SAM-----------
