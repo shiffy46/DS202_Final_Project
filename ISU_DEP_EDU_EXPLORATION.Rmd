@@ -215,8 +215,87 @@ ISUacademicsData
 
 --------DANNY---------
 ```{r}
+#comparison between the count of ISU and UI 4 year completion students.
+ISUvsUIcompl = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
+ISUvsUIcompl = ISUvsUIcompl %>% select(rn, `4_yr_completion.overall.x`, `4_yr_completion.female_students.x`, `4_yr_completion.male_students.x`, `4_yr_completion.overall.y`, `4_yr_completion.female_students.y`, `4_yr_completion.male_students.y`)
+ISUvsUIcompl = ISUvsUIcompl[complete.cases(ISUvsUIcompl), ]
+ggplot(ISUvsUIcompl) + 
+  geom_line(aes(x = rn, y = `4_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_line(aes(x = rn, y = `4_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_line(aes(x = rn, y = `4_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_line(aes(x = rn, y = `4_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_line(aes(x = rn, y = `4_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_line(aes(x = rn, y = `4_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `4_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_point(aes(x = rn, y = `4_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_point(aes(x = rn, y = `4_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_point(aes(x = rn, y = `4_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `4_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_point(aes(x = rn, y = `4_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
+```
 
+```{r}
+#comparison between the count of ISU and UI 6 year completion students.
+ISUvsUIcompl2 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
+ISUvsUIcompl2 = ISUvsUIcompl2 %>% select(rn, `6_yr_completion.overall.x`, `6_yr_completion.female_students.x`, `6_yr_completion.male_students.x`, `6_yr_completion.overall.y`, `6_yr_completion.female_students.y`, `6_yr_completion.male_students.y`)
+ISUvsUIcompl2 = ISUvsUIcompl2[complete.cases(ISUvsUIcompl2), ]
+ggplot(ISUvsUIcompl2) + 
+  geom_line(aes(x = rn, y = `6_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_line(aes(x = rn, y = `6_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_line(aes(x = rn, y = `6_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_line(aes(x = rn, y = `6_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_line(aes(x = rn, y = `6_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_line(aes(x = rn, y = `6_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `6_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_point(aes(x = rn, y = `6_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_point(aes(x = rn, y = `6_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_point(aes(x = rn, y = `6_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `6_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_point(aes(x = rn, y = `6_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
+```
 
+```{r}
+#comparison between the count of ISU and UI 8 year completion students.
+ISUvsUIcompl3 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
+ISUvsUIcompl3 = ISUvsUIcompl3 %>% select(rn, `8_yr_completion.overall.x`, `8_yr_completion.female_students.x`, `8_yr_completion.male_students.x`, `8_yr_completion.overall.y`, `8_yr_completion.female_students.y`, `8_yr_completion.male_students.y`)
+ISUvsUIcompl3 = ISUvsUIcompl3[complete.cases(ISUvsUIcompl3), ]
+ggplot(ISUvsUIcompl3) + 
+  geom_line(aes(x = rn, y = `8_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_line(aes(x = rn, y = `8_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_line(aes(x = rn, y = `8_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_line(aes(x = rn, y = `8_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_line(aes(x = rn, y = `8_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_line(aes(x = rn, y = `8_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `8_yr_completion.overall.x`, group = 1, color = "ISU")) + 
+  geom_point(aes(x = rn, y = `8_yr_completion.overall.y`, group = 1, color = "UI")) +
+  geom_point(aes(x = rn, y = `8_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
+  geom_point(aes(x = rn, y = `8_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
+  geom_point(aes(x = rn, y = `8_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
+  geom_point(aes(x = rn, y = `8_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
+```
+
+```{r}
+#comparison of average overall sat scores between ISU and UI.
+ISUvsUIadmis = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
+ISUvsUIadmis = ISUvsUIadmis %>% select(rn, `sat_scores.average.overall.x`, `sat_scores.average.overall.y`)
+ISUvsUIadmis = ISUvsUIadmis[complete.cases(ISUvsUIadmis), ]
+ggplot(ISUvsUIadmis) + 
+  geom_line(aes(x = rn, y = `sat_scores.average.overall.x`, group = 1, color = "ISU", linetype = "SAT")) +
+  geom_line(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) +
+  geom_point(aes(x = rn, y = `sat_scores.average.overall.x`, group = 1, color = "ISU", linetype = "SAT")) + 
+  geom_point(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) 
+```  
+
+```{r}
+#comparison of overall admission rates between ISU and UI.
+ISUvsUIadmis2 = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
+ISUvsUIadmis2 = ISUvsUIadmis2 %>% select(rn, `admission_rate.overall.x`, `admission_rate.overall.y`)
+ISUvsUIadmis2 = ISUvsUIadmis2[complete.cases(ISUvsUIadmis2), ]
+ggplot(ISUvsUIadmis2) +
+  geom_line(aes(x = rn, y = `admission_rate.overall.x`, group = 1, color = "ISU", linetype = "ADMIS")) +
+  geom_line(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS")) +
+  geom_point(aes(x = rn, y = `admission_rate.overall.x`, group = 1, color = "ISU", linetype = "ADMIS")) +
+  geom_point(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS"))
 ```
 --------DANNY---------
 
