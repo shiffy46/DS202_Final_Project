@@ -10,11 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ##SOURCES:
-MAKE SURE TO PUT ANY SOURCES YOU GUYS LOOK AT IN HERE!!!!
+
+
 ##__________________________
 
-
 -SAM
+
 https://www.tutorialspoint.com/r/r_functions.htm
 https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_detect
 https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
@@ -25,7 +26,6 @@ transpose dataframe
 http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
 Knitting options
 https://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
-
 -
 -LIM
 
@@ -33,6 +33,7 @@ https://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
 -DANNY
 
 -
+
 ##___________________________
 
 #PREPARE THE DATA
@@ -372,5 +373,11 @@ geom_point(aes(x=tuition.out_of_state.y,y=`2_yr_default_rate.y`,color="UI",shape
 geom_point(aes(x=tuition.in_state.x,y=`2_yr_default_rate.x`,color="ISU",shape="In State"))+
 geom_point(aes(x=tuition.in_state.y,y=`2_yr_default_rate.y`,color="UI",shape="In State")) + scale_x_continuous(breaks = seq(from = 0, to=30000, by = 5000)) + scale_y_continuous(breaks = seq(from = 0.01, to=0.04, by = 0.005)) + ylim(0.014,0.041) + xlab("Tuition Cost") + ylab("2 Year Default Rate") + ggtitle("2 Year Default Rate by Tuition Costs")
 ```
+
+
+#Contribution
+
+I chose the data that our group was going to work with. That being said, the data format we had was very tough to parse and was a challenge in itself. I was the one to parse the data into dataframes that we could use to visualize data with. I wrote the first chunk of code in this Rmd file. It took a long time but I eventually got the data into 8 subsections and concatenating each year's subsection into one large dataframe. I was also the project coordinator and was the owner of the github repo that we used. I also created my five visualizations for the presentation and started the google slides for my group to work within.
+
 
 ##---------SAM-----------
