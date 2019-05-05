@@ -1,6 +1,6 @@
 ---
-title: "ISU_DEP_EDU_DATA"
-author: "Sam Shifflett"
+title: "DEP_EDU_DATA"
+author: "Sam Shifflett,Danny Nguyen, Guang Yi Lim"
 date: "4/17/2019"
 output: html_document
 ---
@@ -11,16 +11,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##SOURCES:
 MAKE SURE TO PUT ANY SOURCES YOU GUYS LOOK AT IN HERE!!!!
-__________________________
+##__________________________
+
+
 -SAM
 https://www.tutorialspoint.com/r/r_functions.htm
 https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_detect
 https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
 https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/paste
-#row names to column
+row names to column
 https://stackoverflow.com/questions/29511215/convert-row-names-into-first-column
-#transpose dataframe
+transpose dataframe
 http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
+Knitting options
+https://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
 
 -
 -LIM
@@ -29,13 +33,12 @@ http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
 -DANNY
 
 -
+##___________________________
 
-__________________________
-
-PREPARE THE DATA
-```{r}
-devtools::install_github("Rdatatable/data.table", build_vignettes = FALSE)
+#PREPARE THE DATA
+```{r results='hide', warning=FALSE, message=FALSE}
 library(httr)
+library(ggplot2)
 library(jsonlite)
 library(tidyverse)
 library(plyr)
@@ -196,21 +199,8 @@ UIearningsData = UIjoin_rename(7)
 UIcostData = UIjoin_rename(8)
 ```
 
-## Two Segments.
-1) Academic/Students
-  -completion
-  -students
-  -admissions
-  -academics
-  
-2) Financials
-  -aid
-  -repayments
-  -earnings
-  -cost
-
---------DANNY---------
-```{r}
+#--------DANNY---------
+```{r results="hide", warning=FALSE, message=FALSE}
 #comparison between the count of ISU and UI 4 year completion students.
 ISUvsUIcompl = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl = ISUvsUIcompl %>% select(rn, `4_yr_completion.overall.x`, `4_yr_completion.female_students.x`, `4_yr_completion.male_students.x`, `4_yr_completion.overall.y`, `4_yr_completion.female_students.y`, `4_yr_completion.male_students.y`)
@@ -229,8 +219,7 @@ ggplot(ISUvsUIcompl) +
   geom_point(aes(x = rn, y = `4_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
   geom_point(aes(x = rn, y = `4_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
 ```
-
-```{r}
+```{r results="hide", warning=FALSE, message=FALSE}
 #comparison between the count of ISU and UI 6 year completion students.
 ISUvsUIcompl2 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl2 = ISUvsUIcompl2 %>% select(rn, `6_yr_completion.overall.x`, `6_yr_completion.female_students.x`, `6_yr_completion.male_students.x`, `6_yr_completion.overall.y`, `6_yr_completion.female_students.y`, `6_yr_completion.male_students.y`)
@@ -250,7 +239,7 @@ ggplot(ISUvsUIcompl2) +
   geom_point(aes(x = rn, y = `6_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
 ```
 
-```{r}
+```{r results="hide", warning=FALSE, message=FALSE}
 #comparison between the count of ISU and UI 8 year completion students.
 ISUvsUIcompl3 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl3 = ISUvsUIcompl3 %>% select(rn, `8_yr_completion.overall.x`, `8_yr_completion.female_students.x`, `8_yr_completion.male_students.x`, `8_yr_completion.overall.y`, `8_yr_completion.female_students.y`, `8_yr_completion.male_students.y`)
@@ -270,7 +259,7 @@ ggplot(ISUvsUIcompl3) +
   geom_point(aes(x = rn, y = `8_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
 ```
 
-```{r}
+```{r results="hide", warning=FALSE, message=FALSE}
 #comparison of average overall sat scores between ISU and UI.
 ISUvsUIadmis = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
 ISUvsUIadmis = ISUvsUIadmis %>% select(rn, `sat_scores.average.overall.x`, `sat_scores.average.overall.y`)
@@ -282,7 +271,7 @@ ggplot(ISUvsUIadmis) +
   geom_point(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) 
 ```  
 
-```{r}
+```{r results="hide", warning=FALSE, message=FALSE}
 #comparison of overall admission rates between ISU and UI.
 ISUvsUIadmis2 = inner_join(ISUadmissionData, UIadmissionData, by = "rn")
 ISUvsUIadmis2 = ISUvsUIadmis2 %>% select(rn, `admission_rate.overall.x`, `admission_rate.overall.y`)
@@ -302,8 +291,8 @@ ggplot(ISUvsUIadmis2) +
 ```
 ---------LIM----------
 
----------SAM-----------
-```{r}
+##---------SAM-----------
+```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
 ISUvsUIcost = inner_join(ISUcostData,UIcostData,by="rn") 
 ISUvsUIcost = ISUvsUIcost %>% select(rn,tuition.out_of_state.x,tuition.in_state.x,tuition.out_of_state.y,tuition.in_state.y)
 ISUvsUIcost = type.convert(ISUvsUIcost)
@@ -315,8 +304,10 @@ geom_point(aes(x=rn,y=tuition.in_state.x,group = 1,color="Iowa State University"
 ```
 
 
+#Mean Earnings 10 Years After Entry
 
-```{r}
+This graph shows the mean earnings of individuals 10 years after their entry to their college. I subsetted the list by male and female and also placed the mean earnings for the school itself. As you can see, Males earn a substanial larger amount than females according to this graph. Males also earn much more than the average of both schools. Another important point is that the mean earnings for ISU is about $4000 less than Univeristy of Iowa. This graph may say a good amount, but there are many other factors that tie into the assumptions made from this graph.
+```{r results="hide", warning=FALSE, message=FALSE}
 ISUvsUIearnings = inner_join(ISUearningsData,UIearningsData,by="rn")
 ISUvsUIearnings = ISUvsUIearnings %>% select(rn,`10_yrs_after_entry.working_not_enrolled.mean_earnings.x`,`10_yrs_after_entry.mean_earnings.female_students.x`,`10_yrs_after_entry.mean_earnings.male_students.x`,`10_yrs_after_entry.working_not_enrolled.mean_earnings.y`,`10_yrs_after_entry.mean_earnings.female_students.y`,`10_yrs_after_entry.mean_earnings.male_students.y`)
 ISUvsUIearnings = ISUvsUIearnings[complete.cases(ISUvsUIearnings), ]
@@ -337,7 +328,7 @@ geom_point(aes(x=rn,y=`10_yrs_after_entry.mean_earnings.male_students.y`,group =
 
 
 
-```{r}
+```{r results="hide", warning=FALSE, message=FALSE,include=FALSE}
 ISUaidvisData = ISUaidData %>% select(rn,median_debt.no_pell_grant,median_debt.pell_grant,median_debt.completers.overall,median_debt.noncompleters)
 UIaidvisData = UIaidData %>% select(rn,median_debt.no_pell_grant,median_debt.pell_grant,median_debt.completers.overall,median_debt.noncompleters)
 ISUvsUIaid = inner_join(ISUaidvisData,UIaidvisData,by='rn')
@@ -347,11 +338,13 @@ geom_line(aes(y=median_debt.no_pell_grant.x,group=1,color="ISU",linetype="No Pel
 geom_line(aes(y=median_debt.no_pell_grant.y,group=1,color="UI",linetype="No Pell"))+
 geom_line(aes(y=median_debt.pell_grant.x,group=1,color="ISU",linetype="Pell"))+
 geom_line(aes(y=median_debt.pell_grant.y,group=1,color="UI",linetype="Pell"))+
-  ylab("Debt Value") + xlab("Year") + ggtitle("Debt of students with or without Pell Grant") + theme(text = element_text(size=12))
+  ylab("Median Debt Value") + xlab("Year") + ggtitle("Debt of students with or without Pell Grant") + theme(text = element_text(size=12)) + scale_x_continuous(breaks=seq(from=1995,to=2014,by=1))+scale_y_continuous(breaks=seq(from=5000,to=20000,by=2500))
 ```
 
+#Median Debt for Completers and Non-Completers
 
-```{r}
+This graph displays the median debt values by year for Completers and Non-Completers. The graph shows that Completers have much more debt as compared to their counterparts. This is expected because Non-Completers obviously do not have to pay for all 4 years of a Bachelor's. There is an unepected spike in debt though beginning in 2008. This may be because of the economic disaster during that time.
+```{r results="hide", warning=FALSE, message=FALSE}
 data1 = ISUaidData %>% select(rn,median_debt.completers.overall,median_debt.noncompleters)
 data2 = UIaidData %>% select(rn,median_debt.completers.overall,median_debt.noncompleters)
 ISUvsUIcompleters = inner_join(data1,data2,by='rn')
@@ -364,8 +357,10 @@ geom_line(aes(y=median_debt.noncompleters.y,group=1,color="UI",linetype="noncomp
   xlab("Year")+ylab("Debt Value")+ggtitle("Completers/Non_Completers median debt")
 ```
 
+#Two Year Default Rates by Tuition
 
-```{r}
+This graph displays the two year default rates by the amount that tuition is. I have split the points into In-State and Out-of-State respectively. There is a strange sweet spot in each section that makes the two year default rates decrease. The lower or higher tuition is, the higher the default rate. But, right in the middle of the tuition range is where the default rate is lowest.
+```{r results="hide", warning=FALSE, message=FALSE}
 data1 = ISUrepaymentData %>% select(rn,`2_yr_default_rate`)
 data2 = UIrepaymentData %>% select(rn,`2_yr_default_rate`)
 ISUvsUIdefault = inner_join(data1,data2,by="rn")
@@ -378,4 +373,4 @@ geom_point(aes(x=tuition.in_state.x,y=`2_yr_default_rate.x`,color="ISU",shape="I
 geom_point(aes(x=tuition.in_state.y,y=`2_yr_default_rate.y`,color="UI",shape="In State")) + scale_x_continuous(breaks = seq(from = 0, to=30000, by = 5000)) + scale_y_continuous(breaks = seq(from = 0.01, to=0.04, by = 0.005)) + ylim(0.014,0.041) + xlab("Tuition Cost") + ylab("2 Year Default Rate") + ggtitle("2 Year Default Rate by Tuition Costs")
 ```
 
----------SAM-----------
+##---------SAM-----------
