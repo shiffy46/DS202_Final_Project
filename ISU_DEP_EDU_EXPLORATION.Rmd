@@ -28,7 +28,11 @@ Knitting options
 https://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
 -
 -LIM
-
+https://stackoverflow.com/questions/43456687/using-dplyr-gsub-on-many-columns
+https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html
+https://stackoverflow.com/questions/12297859/remove-all-text-before-colon
+https://stackoverflow.com/questions/47054901/merge-and-sum-two-different-data-tables
+https://stackoverflow.com/questions/28775036/ggplot-line-graph-with-na-values
 -
 -DANNY
 https://stackoverflow.com/questions/10357768/plotting-lines-and-the-group-aesthetic-in-ggplot2
@@ -47,6 +51,7 @@ library(jsonlite)
 library(tidyverse)
 library(plyr)
 library(data.table)
+library(cowplot)
 options(scipen = 999)
 #This is the URL for ISU data
 url = "https://api.data.gov/ed/collegescorecard/v1/schools.json?api_key=KYthZktaAwB5CMGp9Keyl3raXpb6CS43CaMhbLkr&school.name=Iowa%20State%20University"
@@ -270,7 +275,7 @@ ggplot(ISUvsUIcompl3) +
 
 
 
-#Average Overall SAT Scores
+# Average Overall SAT Scores
 
 This plot displays the data of average overall SAT scores from both ISU and UofIowa. The y-axis displays the sat score range while the x-axis displays the year. The plotted lines show the trend of data from both universities with indicated colors that can be seen on the legend located on the right side of the plot. The plot itself was designed to compare the average overall SAT scores between both universities. 
 
@@ -288,7 +293,7 @@ ggplot(ISUvsUIadmis) +
 
 
 
-#Overall Admission Rates
+# Overall Admission Rates
 
 This plot displays data of the overall admission rates from both ISU and UofIowa. The y-axis displays the percentage range of the overall admission rates while the x-axis displays the year. The plotted lines show the trend of data from both universities with indicated colors that can be seen on the legend located on the right side of the plot. This plot was designed to compare the overall admission rates of both universities.
 
@@ -305,18 +310,155 @@ ggplot(ISUvsUIadmis2) +
 ```
 
 
-#Contribution: 
+# Contribution: 
 I contributed five visualizations for the academic portions of the data, specifically completion data and admission data. Three of the five visuals display 4th, 6th, and 8th year completion cohorts from completion data. One visual displays average overall SAT scores from admission data. The final visual displays the overall admission rates from the admission data. It was a bit of a struggle to figure out what would be good variables to select for each plot along with the difficulty of creating the plots themselves.
 
 
 --------DANNY---------
 
----------LIM----------
-```{r}
+##---------LIM----------
+# Top 10 program with highest student percentage 
+This chart shows the top 10 programs with the highest number of students. I summarized the dataframe to give us a mean student percentage over the years for each school. I made seperate bar charts for each school and then use cowplot to combine both barcharts into one graph. Surprisingly, both school had buissness marketing as the program. One thing to note is that ISU seems to be more focused on certain areas, with buisness marketing and engineering making up more than 30% of the schools students.
+```{r results="hide", warning=FALSE, message=FALSE}
+temp1 <- ISUacademicsData %>% select(1:39)
+temp1 <- type.convert(temp1)
+maybe <-temp1 %>% summarise_at(c(2:39),mean)
+maybe1 <- as.data.frame(t(maybe))
+d <- cbind(rownames(maybe1),data.frame(maybe1,row.names = NULL))
+colnames(d) <- c("Program","ISUPercentage")
+d$Program <- as.character(d$Program)
+d<- d %>% mutate(Program = gsub("program_percentage.","",Program))
+d$Program <- as.factor(d$Program)
+d$Program <- reorder(d$Program,-d$ISUPercentage)
 
+
+
+temp2 <- UIacademicsData %>% select(1:39)
+temp2 <- type.convert(temp2)
+maybe <-temp2 %>% summarise_at(c(2:39),mean)
+maybe1 <- as.data.frame(t(maybe))
+c <- cbind(rownames(maybe1),data.frame(maybe1,row.names = NULL))
+colnames(c) <- c("Program","UIPercentage")
+c$Program <- as.character(c$Program)
+c<- c %>% mutate(Program = gsub("program_percentage.","",Program))
+c$Program <- as.factor(c$Program)
+c$Program <- reorder(c$Program,-c$UIPercentage)
+
+#plot of highes intake for programs between unis
+d<- d %>% arrange(desc(ISUPercentage))
+c<- c %>% arrange(desc(UIPercentage))
+ISU <-ggplot(head(d,10),aes(x= Program,y= ISUPercentage,fill = Program))+geom_col() + theme(legend.position = "none")+
+  ylab("Percentage")+ggtitle("ISU Programs")+theme(axis.text.x = element_text(angle = 45, size =7,hjust = 1))
+UI <-ggplot(head(c,10),aes(x= Program,y= UIPercentage,fill = Program))+geom_col() + theme(legend.position = "none")+
+  ylab("Percentage")+ggtitle("UI Programs")+theme(axis.text.x = element_text(angle = 45,size = 7,hjust =1))
+plot_grid(ISU,UI,labels = c("",""))
 
 ```
----------LIM----------
+
+# Students family income level
+The graph displays the income level for students in both unis. Originally, the data was split into 6 levels, with low income, middle income 30,000-48,000,middle income 48,000-75,000,high income 75,000-110,000,high income 110,000+. I merged the middle incomes and high incomes to get only 3 levels, low, middle, high. The graph shows that both schools have a low percentage of low income families, with middle income making up more than 50% for both schools. 
+
+```{r results="hide", warning=FALSE, message=FALSE}
+temp1 <- ISUstudentsData[,c(1,6,11,12,40,41)]  
+temp2 <- UIstudentsData[,c(1,6,11,12,40,41)]
+ISUvsUIfamilyIncome <- inner_join(temp1,temp2,by = "rn")
+ISUvsUIfamilyIncome <- type.convert(ISUvsUIfamilyIncome)
+colnames(ISUvsUIfamilyIncome) <-c("year","ISU low Income","ISU 30,000","ISU 48,000","ISU 75,000","ISU 110,000","UI low Income","UI 30,000","UI 48,000","UI 75,000","UI 110,000")
+ISUvsUIfamilyIncome <- ISUvsUIfamilyIncome %>% mutate('ISU middle Income' = `ISU 30,000`+`ISU 48,000`,'ISU high Income' = `ISU 75,000`+`ISU 110,000`,
+                                                      'UI middle Income' = `UI 30,000`+`UI 48,000`,'UI high Income' = `UI 75,000`+`UI 110,000`)
+ISUvsUIfamilyIncome <- ISUvsUIfamilyIncome[,c(1,2,7,12:15)]
+t <- na.omit(ISUvsUIfamilyIncome)
+#change the value of the x axis to skip the missing data
+ggplot(t,aes(x=year))+
+  geom_point(aes(y=`ISU low Income`,group=1,color="ISU",shape = "low"))+
+  geom_point(aes(y=`ISU middle Income`,group=1,color="ISU",shape = "mid"))+
+  geom_point(aes(y=`ISU high Income`,group=1,color="ISU",shape = "high"))+
+  geom_point(aes(y=`UI low Income`,group=1,color="UI",shape = "low"))+
+  geom_point(aes(y=`UI middle Income`,group=1,color="UI",shape ="mid"))+
+  geom_point(aes(y=`UI high Income`,group=1,color="UI",shape = "high"))+
+  geom_line(aes(y=`ISU low Income`,group=1,color="ISU",))+
+  geom_line(aes(y=`ISU middle Income`,group=1,color="ISU"))+
+  geom_line(aes(y=`ISU high Income`,group=1,color="ISU"))+
+  geom_line(aes(y=`UI low Income`,group=1,color="UI"))+
+  geom_line(aes(y=`UI middle Income`,group=1,color="UI"))+
+  geom_line(aes(y=`UI high Income`,group=1,color="UI"))+
+  ylab("percentage of students")+
+  scale_x_continuous(breaks = seq(1999,2012,by = 2))+
+  scale_y_continuous(breaks= seq(0, max(t$`UI middle Income`),0.1))+
+  theme_grey()+ggtitle("Family Income Levels of dependent students")+
+  theme(plot.title = element_text(size = 11))
+```
+
+# Number of students over the years.
+This graph shows the number of students for schools over time. I subsetted the data to show dependet and independent students. The number of independet students were low for both schools, however it has been increasing slowly for UI. ISU has a larger numbe of dependent students when compared to UI, even when the numbers fell during 2002 the school still had more students than UI.
+```{r results="hide", warning=FALSE, message=FALSE}
+temp1 <- ISUstudentsData[,c(1,7,9)]
+temp2 <- UIstudentsData[,c(1,7,9)]
+temp3 <- inner_join(temp1,temp2,by= "rn")
+temp3 <- type.convert(temp3)
+colnames(temp3) <- c("year","family independent ISU","family dependent ISU","family independent UI","family dependent UI")
+ggplot(temp3,aes(x = year))+
+  geom_line(aes(y= `family independent ISU`,group = 1,color = "ISU", linetype = "independent"))+
+  geom_line(aes(y= `family dependent ISU`,group = 1,color = "ISU", linetype = "dependent"))+
+  geom_line(aes(y= `family independent UI`,group = 1,color = "UI", linetype = "independent"))+
+  geom_line(aes(y= `family dependent UI`,group = 1,color = "UI", linetype = "dependent"))+
+  ylab("Number of Students")+
+  scale_y_continuous(breaks = seq(0, max(temp3$`family dependent ISU`),1000))+
+  scale_x_continuous(breaks = seq(1997,2012,by = 2))+
+  theme(axis.text = element_text(size = 8),axis.title = element_text(size = 10))+
+  theme_grey()+
+  ggtitle("Number of Students over Years")
+```
+
+```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
+parentsISU <- ISUstudentsData[,c(1,9,29,31,30)]
+parentsISU <- type.convert(parentsISU)
+parentsUI <- UIstudentsData[,c(1,9,29,31,30)]
+parentsUI <- type.convert(parentsUI)
+
+parents <- bind_rows(parentsISU, parentsUI) %>%
+  group_by(rn) %>%
+  summarise_all(funs(sum(., na.rm = TRUE)/2))
+colnames(parents) <- c("year","dependent","college","high school","middle school")
+parents$dependent <- parents$dependent/10000
+str(parents)
+ggplot(parents,aes(x= year))+
+  geom_line(aes(y =`dependent`,group = 1,color= "dependent"))+
+  geom_line(aes(y=`high school`,group =1,color= "high school"))+
+  geom_line(aes(y = `college`,group = 1,color = "college"))+
+  geom_line(aes(y = `middle school`,group = 1,color = "middle school"))+
+  geom_point(aes(y =`dependent`,group = 1,color= "dependent"))+
+  geom_point(aes(y=`high school`,group =1,color= "high school"))+
+  geom_point(aes(y = `college`,group = 1,color = "college"))+
+  geom_point(aes(y = `middle school`,group = 1,color = "middle school"))+
+  theme(axis.title.y = element_blank(),axis.text =element_text(size =9) ) + scale_x_continuous(breaks = seq(1997,2012,by = 3))+
+  theme_grey()+
+  ylab("Parents Education Level")+
+  scale_y_continuous(breaks = seq(0,0.9,0.05))
+```
+
+```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
+#retention rate full time
+temp1 <- ISUstudentsData[,c(1,32)]
+temp2 <- UIstudentsData[,c(1,32)]
+temp1 <- inner_join(temp1,temp2,by = "rn")
+temp1 <- type.convert(temp1)
+temp1 <- na.omit(temp1)
+colnames(temp1)<-c("year","retention rate ISU","retention rate UI")
+str(temp1)
+ggplot(temp1,aes(x = `year`))+
+  geom_line(aes(y = `retention rate ISU`, color = "ISU"))+
+  geom_line(aes(y = `retention rate UI`,color = "UI"))+
+  geom_point(aes(y = `retention rate ISU`, color = "ISU"))+
+  geom_point(aes(y = `retention rate UI`,color = "UI"))+
+  ylab("Retention Rate")+
+  ggtitle("Retention Rate over Years")+
+  theme_grey()
+```
+# Contribution
+I worked on the students data and academics data to produce five visualizations, retention rate, familiy income, parents education, and number of students which used data from the students data frame, and top 10 programs which used the academics data frame. The visualization for the academics data was somewhat challenging as the table was not formatted nicely for visualization so I had to modify quite alot of the data before it was ready for visualization. 
+
+##---------LIM----------
 
 ##---------SAM-----------
 ```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
@@ -331,7 +473,7 @@ geom_point(aes(x=rn,y=tuition.in_state.x,group = 1,color="Iowa State University"
 ```
 
 
-#Mean Earnings 10 Years After Entry
+# Mean Earnings 10 Years After Entry
 
 This graph shows the mean earnings of individuals 10 years after their entry to their college. I subsetted the list by male and female and also placed the mean earnings for the school itself. As you can see, Males earn a substanial larger amount than females according to this graph. Males also earn much more than the average of both schools. Another important point is that the mean earnings for ISU is about $4000 less than Univeristy of Iowa. This graph may say a good amount, but there are many other factors that tie into the assumptions made from this graph.
 ```{r results="hide", warning=FALSE, message=FALSE}
@@ -368,7 +510,7 @@ geom_line(aes(y=median_debt.pell_grant.y,group=1,color="UI",linetype="Pell"))+
   ylab("Median Debt Value") + xlab("Year") + ggtitle("Debt of students with or without Pell Grant") + theme(text = element_text(size=12)) + scale_x_continuous(breaks=seq(from=1995,to=2014,by=1))+scale_y_continuous(breaks=seq(from=5000,to=20000,by=2500))
 ```
 
-#Median Debt for Completers and Non-Completers
+# Median Debt for Completers and Non-Completers
 
 This graph displays the median debt values by year for Completers and Non-Completers. The graph shows that Completers have much more debt as compared to their counterparts. This is expected because Non-Completers obviously do not have to pay for all 4 years of a Bachelor's. There is an unepected spike in debt though beginning in 2008. This may be because of the economic disaster during that time.
 ```{r results="hide", warning=FALSE, message=FALSE}
@@ -384,7 +526,7 @@ geom_line(aes(y=median_debt.noncompleters.y,group=1,color="UI",linetype="noncomp
   xlab("Year")+ylab("Debt Value")+ggtitle("Completers/Non_Completers median debt")
 ```
 
-#Two Year Default Rates by Tuition
+# Two Year Default Rates by Tuition
 
 This graph displays the two year default rates by the amount that tuition is. I have split the points into In-State and Out-of-State respectively. There is a strange sweet spot in each section that makes the two year default rates decrease. The lower or higher tuition is, the higher the default rate. But, right in the middle of the tuition range is where the default rate is lowest.
 ```{r results="hide", warning=FALSE, message=FALSE}
@@ -401,7 +543,7 @@ geom_point(aes(x=tuition.in_state.y,y=`2_yr_default_rate.y`,color="UI",shape="In
 ```
 
 
-#Contribution
+# Contribution
 
 I chose the data that our group was going to work with. That being said, the data format we had was very tough to parse and was a challenge in itself. I was the one to parse the data into dataframes that we could use to visualize data with. I wrote the first chunk of code in this Rmd file. It took a long time but I eventually got the data into 8 subsections and concatenating each year's subsection into one large dataframe. I was also the project coordinator and was the owner of the github repo that we used. I also created my five visualizations for the presentation and started the google slides for my group to work within.
 
