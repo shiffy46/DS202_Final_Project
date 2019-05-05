@@ -214,7 +214,7 @@ UIcostData = UIjoin_rename(8)
 
 --------DANNY---------
 ```{r}
-#comparison between the count of ISU and UI 4 year completion students
+#comparison between the count of ISU and UI 4 year completion students.
 ISUvsUIcompl = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl = ISUvsUIcompl %>% select(rn, `4_yr_completion.overall.x`, `4_yr_completion.female_students.x`, `4_yr_completion.male_students.x`, `4_yr_completion.overall.y`, `4_yr_completion.female_students.y`, `4_yr_completion.male_students.y`)
 ISUvsUIcompl = ISUvsUIcompl[complete.cases(ISUvsUIcompl), ]
@@ -234,7 +234,7 @@ ggplot(ISUvsUIcompl) +
 ```
 
 ```{r}
-#comparison between the count of ISU and UI 6 year completion students
+#comparison between the count of ISU and UI 6 year completion students.
 ISUvsUIcompl2 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl2 = ISUvsUIcompl2 %>% select(rn, `6_yr_completion.overall.x`, `6_yr_completion.female_students.x`, `6_yr_completion.male_students.x`, `6_yr_completion.overall.y`, `6_yr_completion.female_students.y`, `6_yr_completion.male_students.y`)
 ISUvsUIcompl2 = ISUvsUIcompl2[complete.cases(ISUvsUIcompl2), ]
@@ -254,7 +254,7 @@ ggplot(ISUvsUIcompl2) +
 ```
 
 ```{r}
-#comparison between the count of ISU and UI 8 year completion students
+#comparison between the count of ISU and UI 8 year completion students.
 ISUvsUIcompl3 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl3 = ISUvsUIcompl3 %>% select(rn, `8_yr_completion.overall.x`, `8_yr_completion.female_students.x`, `8_yr_completion.male_students.x`, `8_yr_completion.overall.y`, `8_yr_completion.female_students.y`, `8_yr_completion.male_students.y`)
 ISUvsUIcompl3 = ISUvsUIcompl3[complete.cases(ISUvsUIcompl3), ]
