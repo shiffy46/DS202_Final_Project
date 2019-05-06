@@ -1,6 +1,6 @@
 ---
 title: "DEP_EDU_DATA"
-author: "Sam Shifflett,Danny Nguyen, Guang Yi Lim"
+author: "Sam Shifflett, Danny Nguyen, Guang Yi Lim"
 date: "4/17/2019"
 output: html_document
 ---
@@ -13,6 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ##__________________________
+
+-DATA SOURCE
+
+https://collegescorecard.ed.gov/data/
 
 -SAM
 
