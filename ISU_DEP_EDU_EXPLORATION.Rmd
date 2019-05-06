@@ -20,21 +20,28 @@ https://www.tutorialspoint.com/r/r_functions.htm
 https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_detect
 https://stackoverflow.com/questions/17499013/how-do-i-make-a-list-of-data-frames
 https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/paste
+
 row names to column
 https://stackoverflow.com/questions/29511215/convert-row-names-into-first-column
+
 transpose dataframe
 http://www.rpubs.com/Mentors_Ubiqum/Transpose_Dataframe
+
 Knitting options
 https://kbroman.org/knitr_knutshell/pages/Rmarkdown.html
--
+
+
 -LIM
+
 https://stackoverflow.com/questions/43456687/using-dplyr-gsub-on-many-columns
 https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html
 https://stackoverflow.com/questions/12297859/remove-all-text-before-colon
 https://stackoverflow.com/questions/47054901/merge-and-sum-two-different-data-tables
 https://stackoverflow.com/questions/28775036/ggplot-line-graph-with-na-values
--
+
+
 -DANNY
+
 https://stackoverflow.com/questions/10357768/plotting-lines-and-the-group-aesthetic-in-ggplot2
 https://stackoverflow.com/questions/3777174/plotting-two-variables-as-lines-using-ggplot2-on-the-same-graph
 https://stackoverflow.com/questions/32588215/add-multiple-geom-line-to-ggplot?rq=1
@@ -43,7 +50,7 @@ https://stackoverflow.com/questions/34379268/ggplot-and-two-different-geom-line-
 
 ##___________________________
 
-#PREPARE THE DATA
+##PREPARE THE DATA
 ```{r results='hide', warning=FALSE, message=FALSE}
 library(httr)
 library(ggplot2)
@@ -208,7 +215,7 @@ UIearningsData = UIjoin_rename(7)
 UIcostData = UIjoin_rename(8)
 ```
 
-#--------DANNY---------
+###--------DANNY---------
 
 # 4 Year Completion Cohorts
 
@@ -231,9 +238,10 @@ ggplot(ISUvsUIcompl) +
   geom_point(aes(x = rn, y = `4_yr_completion.female_students.x`, group = 1, color = "ISU", linetype = "FEMALE")) +
   geom_point(aes(x = rn, y = `4_yr_completion.male_students.x`, group = 1, color = "ISU", linetype = "MALE")) +
   geom_point(aes(x = rn, y = `4_yr_completion.female_students.y`, group = 1, color = "UI", linetype = "FEMALE")) + 
-  geom_point(aes(x = rn, y = `4_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
+  geom_point(aes(x = rn, y = `4_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE")) + theme(text = element_text(size=8))
 ```
-```{r results="hide", warning=FALSE, message=FALSE}
+
+```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
 #comparison between the count of ISU and UI 6 year completion students.
 ISUvsUIcompl2 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl2 = ISUvsUIcompl2 %>% select(rn, `6_yr_completion.overall.x`, `6_yr_completion.female_students.x`, `6_yr_completion.male_students.x`, `6_yr_completion.overall.y`, `6_yr_completion.female_students.y`, `6_yr_completion.male_students.y`)
@@ -253,7 +261,7 @@ ggplot(ISUvsUIcompl2) +
   geom_point(aes(x = rn, y = `6_yr_completion.male_students.y`, group = 1, color = "UI", linetype = "MALE"))
 ```
 
-```{r results="hide", warning=FALSE, message=FALSE}
+```{r results="hide", warning=FALSE, message=FALSE,include=FALSE}
 #comparison between the count of ISU and UI 8 year completion students.
 ISUvsUIcompl3 = inner_join(ISUcompletionData, UIcompletionData, by = "rn")
 ISUvsUIcompl3 = ISUvsUIcompl3 %>% select(rn, `8_yr_completion.overall.x`, `8_yr_completion.female_students.x`, `8_yr_completion.male_students.x`, `8_yr_completion.overall.y`, `8_yr_completion.female_students.y`, `8_yr_completion.male_students.y`)
@@ -288,7 +296,7 @@ ggplot(ISUvsUIadmis) +
   geom_line(aes(x = rn, y = `sat_scores.average.overall.x`, group = 1, color = "ISU", linetype = "SAT")) +
   geom_line(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) +
   geom_point(aes(x = rn, y = `sat_scores.average.overall.x`, group = 1, color = "ISU", linetype = "SAT")) + 
-  geom_point(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT")) 
+  geom_point(aes(x = rn, y = `sat_scores.average.overall.y`, group = 1, color = "UI", linetype = "SAT"))  + theme(text = element_text(size=12))
 ```  
 
 
@@ -306,19 +314,23 @@ ggplot(ISUvsUIadmis2) +
   geom_line(aes(x = rn, y = `admission_rate.overall.x`, group = 1, color = "ISU", linetype = "ADMIS")) +
   geom_line(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS")) +
   geom_point(aes(x = rn, y = `admission_rate.overall.x`, group = 1, color = "ISU", linetype = "ADMIS")) +
-  geom_point(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS"))
+  geom_point(aes(x = rn, y = `admission_rate.overall.y`, group = 1, color = "UI", linetype = "ADMIS")) + theme(text = element_text(size=12))
 ```
 
 
 # Contribution: 
+
 I contributed five visualizations for the academic portions of the data, specifically completion data and admission data. Three of the five visuals display 4th, 6th, and 8th year completion cohorts from completion data. One visual displays average overall SAT scores from admission data. The final visual displays the overall admission rates from the admission data. It was a bit of a struggle to figure out what would be good variables to select for each plot along with the difficulty of creating the plots themselves.
 
 
---------DANNY---------
+###--------DANNY---------
 
-##---------LIM----------
+###---------LIM----------
+
 # Top 10 program with highest student percentage 
+
 This chart shows the top 10 programs with the highest number of students. I summarized the dataframe to give us a mean student percentage over the years for each school. I made seperate bar charts for each school and then use cowplot to combine both barcharts into one graph. Surprisingly, both school had buissness marketing as the program. One thing to note is that ISU seems to be more focused on certain areas, with buisness marketing and engineering making up more than 30% of the schools students.
+
 ```{r results="hide", warning=FALSE, message=FALSE}
 temp1 <- ISUacademicsData %>% select(1:39)
 temp1 <- type.convert(temp1)
@@ -391,6 +403,7 @@ ggplot(t,aes(x=year))+
 
 # Number of students over the years.
 This graph shows the number of students for schools over time. I subsetted the data to show dependet and independent students. The number of independet students were low for both schools, however it has been increasing slowly for UI. ISU has a larger numbe of dependent students when compared to UI, even when the numbers fell during 2002 the school still had more students than UI.
+
 ```{r results="hide", warning=FALSE, message=FALSE}
 temp1 <- ISUstudentsData[,c(1,7,9)]
 temp2 <- UIstudentsData[,c(1,7,9)]
@@ -456,11 +469,12 @@ ggplot(temp1,aes(x = `year`))+
   theme_grey()
 ```
 # Contribution
+
 I worked on the students data and academics data to produce five visualizations, retention rate, familiy income, parents education, and number of students which used data from the students data frame, and top 10 programs which used the academics data frame. The visualization for the academics data was somewhat challenging as the table was not formatted nicely for visualization so I had to modify quite alot of the data before it was ready for visualization. 
 
-##---------LIM----------
+###---------LIM----------
 
-##---------SAM-----------
+###---------SAM-----------
 ```{r results="hide", warning=FALSE, message=FALSE, include=FALSE}
 ISUvsUIcost = inner_join(ISUcostData,UIcostData,by="rn") 
 ISUvsUIcost = ISUvsUIcost %>% select(rn,tuition.out_of_state.x,tuition.in_state.x,tuition.out_of_state.y,tuition.in_state.y)
@@ -548,4 +562,4 @@ geom_point(aes(x=tuition.in_state.y,y=`2_yr_default_rate.y`,color="UI",shape="In
 I chose the data that our group was going to work with. That being said, the data format we had was very tough to parse and was a challenge in itself. I was the one to parse the data into dataframes that we could use to visualize data with. I wrote the first chunk of code in this Rmd file. It took a long time but I eventually got the data into 8 subsections and concatenating each year's subsection into one large dataframe. I was also the project coordinator and was the owner of the github repo that we used. I also created my five visualizations for the presentation and started the google slides for my group to work within.
 
 
-##---------SAM-----------
+###---------SAM-----------
